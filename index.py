@@ -83,22 +83,9 @@ async def video_content(vid: str, request: Request):
     video_path = os.path.join(os.path.dirname(__file__), f"videos/{vid}.mp4")
     if not os.path.exists(video_path):
         raise HTTPException(status_code=400, detail="Video does not exist")
-
-    # video_size = os.path.getsize(video_path)
-    # with open(video_path, 'rb') as f:
-    #     chunk_size = 10 ** 6
-    #     start = int(re.sub(r'[^0-9]', '', request.headers["Range"]))
-    #     end = min(start + chunk_size, video_size - 1)
-    #     content_length = end - start + 1
-    #     f.seek(start)
-    #     data = f.read(end - start)
-    #     headers = {
-    #         "Content-Range": f"bytes {start}-{end}/{video_size}",
-    #         "Accept-Ranges": "bytes",
-    #         "Content-Length": str(end - start),
-    #         "Content-Type": "video/mp4",
-    #     }
-    #     response = Response(data, headers=headers, media_type="video/mp4")
-    #     response.status_code = 206
-    #     return response
     return range_requests_response(request, video_path, "video/mp4")
+
+
+@app.exception_handler(404)
+async def custom_404_handler(_, __):
+    return FileResponse(os.path.join(os.path.dirname(__file__), "frontend/build/index.html"))
