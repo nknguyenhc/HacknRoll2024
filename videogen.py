@@ -1,4 +1,4 @@
-from moviepy.editor import AudioFileClip, ImageClip, concatenate_videoclips
+from moviepy.editor import AudioFileClip, ImageClip, CompositeVideoClip
 from cv2 import imread
 
 def generate_video(lyrics, vid_id):
@@ -33,8 +33,7 @@ def generate_video(lyrics, vid_id):
     * Name the generated video. The video should be put in `video` folder and named `f"{vid_id}.mp4"`.
     """
     audio = AudioFileClip(f"audio/{vid_id}.mp4")
-    print(audio.duration)
-    fps = 30
+    fps = 10
 
     # create individual clips from images
     curr_point = lyrics[0]["duration"] + lyrics[0]["start"]
@@ -43,12 +42,13 @@ def generate_video(lyrics, vid_id):
         if i == 0 or i == len(lyrics) - 1:
             continue
         next_point = sentence["duration"] + sentence["start"]
-        clips.append(ImageClip(imread(f"images/{vid_id}/{i}.png")).set_duration(next_point - curr_point).set_fps(fps))
+        print(i, next_point, curr_point)
+        clips.append(ImageClip(imread(f"images/{vid_id}/{i}.png")).set_start(curr_point).set_duration(next_point - curr_point).set_fps(fps))
         curr_point = next_point
-    clips.append(ImageClip(imread(f"images/{vid_id}/{len(lyrics) - 1}.png")).set_duration(audio.duration - curr_point).set_fps(fps))
+    clips.append(ImageClip(imread(f"images/{vid_id}/{len(lyrics) - 1}.png")).set_start(curr_point).set_duration(audio.duration - curr_point).set_fps(fps))
     
     # combine clips and add audio
-    video_clip = concatenate_videoclips(clips).set_audio(audio)
+    video_clip = CompositeVideoClip(clips).set_audio(audio)
     video_clip.write_videofile(f"videos/{vid_id}.mp4")
 
 
