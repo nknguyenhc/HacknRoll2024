@@ -33,7 +33,7 @@ def generate_video(lyrics, vid_id):
     * Name the generated video. The video should be put in `video` folder and named `f"{vid_id}.mp4"`.
     """
     audio = AudioFileClip(f"audio/{vid_id}.mp4")
-    fps = 10
+    fps = 5
 
     # create individual clips from images
     curr_point = lyrics[0]["duration"] + lyrics[0]["start"]
