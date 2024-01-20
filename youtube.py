@@ -64,8 +64,8 @@ def get_caption(yt_link, vid_id):
     body = tree.getroot()[1]
     captions = list(map(
         lambda line: {
-            "start": line.attrib['t'],
-            "duration": line.attrib['d'],
+            "start": float(line.attrib['t']) / 1000,
+            "duration": float(line.attrib['d']) / 1000,
             "text": line.text,
         },
         body

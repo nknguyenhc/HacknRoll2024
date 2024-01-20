@@ -1,3 +1,6 @@
+from moviepy.editor import AudioFileClip, ImageClip, concatenate_videoclips
+from cv2 import imread
+
 def generate_video(lyrics, vid_id):
     """Generate a parody video from the lyrics and the generated images.
     The `lyrics` is an array, each element is a dictionary representing a sentence in the music video, with the following keys:
@@ -26,7 +29,43 @@ def generate_video(lyrics, vid_id):
     * Obtain the audio file. The audio file is named `f"{vid_id}.mp4"` located in `audio` folder.
     * Obtain images. The images are found in the folder `/images/{vid_id}`.
         Each frame is named after the index of the lyrics sentence.
-        For example, image corresponding to frame 9 is named `9.png` or `9.jpg` (extension to be decided later).
+        For example, image corresponding to frame 9 is named `9.png`.
     * Name the generated video. The video should be put in `video` folder and named `f"{vid_id}.mp4"`.
     """
-    pass
+    audio = AudioFileClip(f"audio/{vid_id}.mp4")
+    print(audio.duration)
+    fps = 30
+
+    # create individual clips from images
+    curr_point = lyrics[0]["duration"] + lyrics[0]["start"]
+    clips = [ImageClip(imread(f"images/{vid_id}/0.png")).set_duration(curr_point).set_fps(fps)]
+    for i, sentence in enumerate(lyrics):
+        if i == 0 or i == len(lyrics) - 1:
+            continue
+        next_point = sentence["duration"] + sentence["start"]
+        clips.append(ImageClip(imread(f"images/{vid_id}/{i}.png")).set_duration(next_point - curr_point).set_fps(fps))
+        curr_point = next_point
+    clips.append(ImageClip(imread(f"images/{vid_id}/{len(lyrics) - 1}.png")).set_duration(audio.duration - curr_point).set_fps(fps))
+    
+    # combine clips and add audio
+    video_clip = concatenate_videoclips(clips).set_audio(audio)
+    video_clip.write_videofile(f"videos/{vid_id}.mp4")
+
+
+def test():
+    generate_video([
+        {
+            "start": 1.395,
+            "duration": 4.931,
+            "text": "\u266a Just gonna stand there\nand watch me burn \u266a"
+        }, 
+        {
+            "start": 6.326,
+            "duration": 5.000,
+            "text": "\u266a Well, that's alright, because\nI like the way it hurts \u266a"
+        },
+    ], "sample")
+
+
+if __name__ == '__main__':
+    test()

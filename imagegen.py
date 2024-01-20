@@ -31,7 +31,7 @@ def generate_images(lyrics, vid_id):
     The images generated must be located in `images/{vid_id}` folder, that is,
     the folder must be named after the ID `vid_id` and must be located in the folder `images`.
     Each image must be named by the index of the lyrics sentence that it corresponds to.
-    For example, image that corresponds to sentence index 9 must be named `9.jpg` or `9.png` (extension to be decided later).
+    For example, image that corresponds to sentence index 9 must be named `9.png`.
     Note that index is 0-based.
 
     Some sentences may fail to generate images on Stable Diffusion.
