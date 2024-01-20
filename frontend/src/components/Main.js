@@ -22,7 +22,7 @@ export default function Album() {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = React.useState(false);
   const { enqueueSnackbar } = useSnackbar();
-  const [vid_id, setVidId] = useState("");
+  const [vidId, setVidId] = useState("");
 
   const handleClose = () => {
     setOpen(false);
@@ -47,7 +47,7 @@ export default function Album() {
     api
       .get("/video", { params: { url: url } })
       .then((res) => {
-        setVidId(res.data.vid_id);
+        setVidId(res.data.id);
         enqueueSnackbar("Video generated successfully", { variant: "success" });
         setOpen(true);
         setLoading(true);
@@ -147,10 +147,16 @@ export default function Album() {
         </Container>
       </Box>
 
-      <Dialog open={open} onClose={handleClose}>
-        <DialogContent>
+      <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
+        <DialogContent
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           <ReactPlayer
-            url={`http://localhost:8000/content/${vid_id}`}
+            url={`${api.defaults.baseURL}/content/${vidId}`}
             controls={true}
             playing={true}
           />
