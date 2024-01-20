@@ -48,6 +48,7 @@ def generate_images(lyrics, vid_id):
 
     # make asynchronous requests?
     for i, sentence in enumerate(lyrics):
+        print(i)
         body = {
             "steps": 40,
             "width": 1216,
@@ -68,7 +69,7 @@ def generate_images(lyrics, vid_id):
         )
         if response.status_code != 200:
             copy_placeholder(vid_id, i)
-            return
+            continue
         
         data = response.json()
         image = data["artifacts"][0]
