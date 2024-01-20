@@ -1,4 +1,5 @@
 from pytube import YouTube
+import xml.etree.ElementTree as ET
 
 def get_caption(yt_link, vid_id):
     """Given a YouTube link, downloads the audio of the video, and returns the lyrics of the song.
@@ -39,15 +40,37 @@ def get_caption(yt_link, vid_id):
     This is to prevent users from clogging the server with a very long Youtube video.
     """
 
-    return "Eminem - Love The Way You Lie ft. Rihanna", [
-        {
-            "start": 1.395,
-            "duration": 4.931,
-            "text": "\u266a Just gonna stand there\nand watch me burn \u266a"
-        }, 
-        {
-            "start": 6.326,
-            "duration": 5.000,
-            "text": "\u266a Well, that's alright, because\nI like the way it hurts \u266a"
+    yt = YouTube(yt_link)
+
+    audio_streams = yt.streams.filter(only_audio=True, subtype="mp4")
+    if len(audio_streams) == 0:
+        raise ValueError("Video does not have any MP4 stream.")
+    if len(yt.captions) == 0:
+        raise ValueError("Video does not have any caption")
+    
+    # download video
+    filename = f"{vid_id}.mp4"
+    audio_streams[0].download(output_path="audio", filename=filename)
+
+    # extract caption
+    xml = list(yt.captions)[0].xml_captions
+    tree = ET.ElementTree(ET.fromstring(xml))
+    body = tree.getroot()[1]
+    captions = list(map(
+        lambda line: {
+            "start": line.attrib['t'],
+            "duration": line.attrib['d'],
+            "text": line.text,
         },
-    ]
+        body
+    ))
+
+    return yt.title, captions
+
+
+def test():
+    print(get_caption('https://www.youtube.com/watch?v=aJOTlE1K90k', 'sample'))
+
+
+if __name__ == '__main__':
+    test()
