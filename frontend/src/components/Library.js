@@ -1,51 +1,75 @@
-import * as React from "react";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import { Card, CardActions, CardContent, CardMedia, Grid } from "@mui/material";
+import VideoDialog from "./VideoDialog";
+import { Container, Grid, Card, CardContent, Typography, Box, IconButton } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useEffect, useState } from "react";
 
 export default function Library() {
-  const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  const [pastVideos, setPastVideos] = useState([]);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedVideo, setSelectedVideo] = useState(null);
+
+  useEffect(() => {
+    const storedVideos = JSON.parse(localStorage.getItem("pastVideos")) || [];
+    setPastVideos(storedVideos);
+    console.log(storedVideos);
+  }, []);
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
+
+  const handleCardClick = (video) => {
+    setSelectedVideo(video);
+    setDialogOpen(true);
+  };
+
+  const handleDeleteClick = (event, videoToDelete) => {
+    event.stopPropagation();
+    const updatedVideos = pastVideos.filter(video => video.id !== videoToDelete.id);
+    setPastVideos(updatedVideos);
+    localStorage.setItem('pastVideos', JSON.stringify(updatedVideos));
+  };
+
   return (
-    <main>
-      <Container sx={{ py: 8 }} maxWidth="md">
-        {/* End hero unit */}
+    <Box
+      sx={{
+        bgcolor: "background.paper",
+        width: "100vw",
+        height: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <Container maxWidth="md">
         <Grid container spacing={4}>
-          {cards.map((card) => (
-            <Grid item key={card} xs={12} sm={6} md={4}>
-              <Card
-                sx={{
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-              >
-                <CardMedia
-                  component="div"
-                  sx={{
-                    // 16:9
-                    pt: "56.25%",
-                  }}
-                  image="https://source.unsplash.com/random?wallpapers"
-                />
-                <CardContent sx={{ flexGrow: 1 }}>
-                  <Typography gutterBottom variant="h5" component="h2">
-                    Heading
+          {pastVideos.map((video) => (
+            <Grid item key={video.id} xs={12} sm={6} md={4}>
+              <Card onClick={() => handleCardClick(video)}>
+                <CardContent>
+                  <Typography gutterBottom variant="h6" component="h2" color={"primary"} fontWeight="800">
+                    {video.title}
                   </Typography>
                   <Typography>
-                    This is a media card. You can use this section to describe
-                    the content.
+                    Generated at: {new Date(video.timestamp).toLocaleString()}
                   </Typography>
+                  <IconButton onClick={(event) => handleDeleteClick(event, video)}>
+                    <DeleteIcon />
+                  </IconButton>
                 </CardContent>
-                <CardActions>
-                  <Button size="small">View</Button>
-                  <Button size="small">Edit</Button>
-                </CardActions>
               </Card>
             </Grid>
           ))}
         </Grid>
+        {selectedVideo && (
+          <VideoDialog
+            open={dialogOpen}
+            handleClose={handleDialogClose}
+            title={selectedVideo.title}
+            vidId={selectedVideo.id}
+          />
+        )}
       </Container>
-    </main>
+    </Box>
   );
 }

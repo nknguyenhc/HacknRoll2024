@@ -1,18 +1,16 @@
 import * as React from "react";
+import VideoDialog from "./VideoDialog";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
-import Dialog from "@mui/material/Dialog";
-import DialogContent from "@mui/material/DialogContent";
 import LinearProgress from "@mui/material/LinearProgress";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import InputAdornment from "@mui/material/InputAdornment";
 import api from "../api";
 import { useState } from "react";
-import ReactPlayer from "react-player";
 import { useSnackbar } from "notistack";
 
 export default function Main() {
@@ -47,10 +45,17 @@ export default function Main() {
     api
       .get("/video", { params: { url: url } })
       .then((res) => {
-        setVidId(res.data.id);
+        const videoData = {
+          id: res.data.id,
+          title: res.data.title,
+          timestamp: new Date().toISOString(),
+        };
+        setVidId(videoData.id);
         enqueueSnackbar("Video generated successfully", { variant: "success" });
         setOpen(true);
-        setLoading(true);
+        let pastVideos = JSON.parse(localStorage.getItem("pastVideos")) || [];
+        pastVideos.push(videoData);
+        localStorage.setItem("pastVideos", JSON.stringify(pastVideos));
       })
       .catch((err) => {
         console.log(err);
@@ -147,35 +152,7 @@ export default function Main() {
         </Container>
       </Box>
 
-      <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
-        <DialogContent
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            flexDirection: "column",
-          }}
-        >
-          <Typography
-            variant="h6"
-            align="center"
-            color="primary"
-            sx={{
-              borderRadius: "10px",
-              textAlign: "center",
-              // padding: "10px",
-              fontWeight: "800",
-            }}
-          >
-            Video Title: {title}
-          </Typography>
-          <ReactPlayer
-            url={`${api.defaults.baseURL}/content/${vidId}`}
-            controls={true}
-            playing={true}
-          />
-        </DialogContent>
-      </Dialog>
+      <VideoDialog open={open} handleClose={handleClose} title={title} vidId={vidId} />
     </main>
   );
 }
