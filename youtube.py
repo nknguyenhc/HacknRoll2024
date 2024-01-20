@@ -75,7 +75,7 @@ def get_caption(yt_link, vid_id):
 
 
 def test():
-    print(get_caption('https://www.youtube.com/watch?v=aJOTlE1K90k', 'sample'))
+    print(get_caption('https://www.youtube.com/watch?v=uelHwf8o7_U', 'sample'))
 
 
 if __name__ == '__main__':

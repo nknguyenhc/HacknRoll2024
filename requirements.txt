@@ -1,6 +1,7 @@
 annotated-types==0.6.0
 anyio==4.2.0
 certifi==2023.11.17
+cffi==1.16.0
 charset-normalizer==3.3.2
 click==8.1.7
 colorama==0.4.6
@@ -9,6 +10,8 @@ dnspython==2.4.2
 email-validator==2.1.0.post1
 exceptiongroup==1.2.0
 fastapi==0.109.0
+gevent==23.9.1
+greenlet==3.0.3
 grequests==0.7.0
 h11==0.14.0
 httpcore==1.0.2
@@ -26,6 +29,7 @@ opencv-python==4.9.0.80
 orjson==3.9.12
 pillow==10.2.0
 proglog==0.1.10
+pycparser==2.21
 pydantic==2.5.3
 pydantic-extra-types==2.4.1
 pydantic-settings==2.1.0
@@ -44,3 +48,5 @@ urllib3==2.1.0
 uvicorn==0.26.0
 watchfiles==0.21.0
 websockets==12.0
+zope.event==5.0
+zope.interface==6.1
