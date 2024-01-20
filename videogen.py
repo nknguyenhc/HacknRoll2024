@@ -50,6 +50,7 @@ def generate_video(lyrics, vid_id):
     # combine clips and add audio
     video_clip = concatenate_videoclips(clips).set_audio(audio)
     video_clip.write_videofile(f"videos/{vid_id}.mp4")
+    return video_clip
 
 
 def test():
