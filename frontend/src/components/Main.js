@@ -8,6 +8,7 @@ import Container from "@mui/material/Container";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import InputAdornment from "@mui/material/InputAdornment";
 import api from "../api";
+import { Link } from 'react-router-dom';
 
 export default function Album() {
   const [url, setUrl] = React.useState("");

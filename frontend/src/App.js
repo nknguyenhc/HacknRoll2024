@@ -1,6 +1,10 @@
+import React from 'react';
 import "./App.css";
 import Main from "./components/Main";
+import Navbar from './components/NavBar';
+import Videos from './components/Videos';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 const theme = createTheme({
   palette: {
@@ -35,7 +39,13 @@ function App() {
   // );
   return (
     <ThemeProvider theme={theme}>
-      <Main />
+      <Router>
+        <Navbar />
+        <Routes>
+          <Route path="/" exact component={Main} />
+          <Route path="/videos" component={Videos} />
+        </Routes>
+      </Router>
     </ThemeProvider>
   );
 }
