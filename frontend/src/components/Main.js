@@ -153,8 +153,22 @@ export default function Album() {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            flexDirection: "column",
           }}
         >
+          <Typography
+            variant="h6"
+            align="center"
+            color="primary"
+            sx={{
+              borderRadius: "10px",
+              textAlign: "center",
+              // padding: "10px",
+              fontWeight: "800",
+            }}
+          >
+            Video Title: {title}
+          </Typography>
           <ReactPlayer
             url={`${api.defaults.baseURL}/content/${vidId}`}
             controls={true}
