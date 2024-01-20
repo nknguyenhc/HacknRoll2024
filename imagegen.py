@@ -73,6 +73,10 @@ def generate_images(lyrics, vid_id):
     # t1 = time.time()
     # print("{} seconds used to generate images".format(t1 - t0))
     for i, response in enumerate(responses):
+        if response is None:
+            print("None response")
+            copy_placeholder(vid_id, i)
+            continue
         if response.status_code != 200:
             print(response.json())
             copy_placeholder(vid_id, i)
