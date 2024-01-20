@@ -1,6 +1,12 @@
 from pytube import YouTube
 import xml.etree.ElementTree as ET
 
+def get_title(yt_link):
+    """Returns the title of the Youtube video in the given link.
+    """
+
+    return YouTube(yt_link).title
+
 def get_caption(yt_link, vid_id):
     """Given a YouTube link, downloads the audio of the video, and returns the lyrics of the song.
 
