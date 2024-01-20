@@ -2,7 +2,6 @@ from moviepy.editor import AudioFileClip, ImageClip, CompositeVideoClip
 from cv2 import imread
 import os
 
-# TODO: add subtitles
 def generate_video(lyrics, vid_id):
     """Generate a parody video from the lyrics and the generated images.
     The `lyrics` is an array, each element is a dictionary representing a sentence in the music video, with the following keys:

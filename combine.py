@@ -7,6 +7,7 @@ HAPPY_NEW_YEAR_URL = 'https://www.youtube.com/watch?v=3Uo0JAUWijM'
 INTO_THE_UNKNOWN_URL = 'https://www.youtube.com/watch?v=gIOyB9ZXn8s'
 SNOWMAN_URL = 'https://www.youtube.com/watch?v=gset79KMmt0'
 COUNTING_STARS_URL = 'https://www.youtube.com/watch?v=hT_nvWreIhg'
+ANIMALS_URL = 'https://www.youtube.com/watch?v=qpgTC9MDx1o'
 
 def from_yt(yt_link, vid_id):
     """Generate a parody video based on the Youtube video and the video ID.
@@ -22,7 +23,7 @@ def from_yt(yt_link, vid_id):
 
 
 def test():
-    from_yt(COUNTING_STARS_URL, 'sample6')
+    from_yt(ANIMALS_URL, 'sample7')
 
 
 if __name__ == '__main__':

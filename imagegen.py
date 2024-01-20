@@ -4,9 +4,9 @@ import os
 import shutil
 from PIL import Image, ImageDraw, ImageFont
 
-IMAGE_WIDTH = 1216
-IMAGE_HEIGHT = 832
-SUBTITLE_HEIGHT = 720
+IMAGE_WIDTH = 1024
+IMAGE_HEIGHT = 576
+SUBTITLE_HEIGHT = 500
 SUBS_FONT_FILENAME = "./subs_font.ttf"
 SUBS_FONT_SIZE = 24
 SUBS_BORDER_COLOR = "blue"
@@ -46,7 +46,7 @@ def generate_images(lyrics, vid_id):
     In that case, please make sure that another image is present for that index.
     """
 
-    url = "https://api.stability.ai/v1/generation/stable-diffusion-xl-1024-v1-0/text-to-image"
+    url = "https://api.stability.ai/v1/generation/stable-diffusion-v1-6/text-to-image"
     headers = {
         "Accept": "application/json",
         "Content-Type": "application/json",
@@ -62,12 +62,17 @@ def generate_images(lyrics, vid_id):
             "width": IMAGE_WIDTH,
             "height": IMAGE_HEIGHT,
             "seed": 0,
-            "cfg_scale": 10,
+            "cfg_scale": 12,
             "samples": 1,
             "text_prompts": [
                 {
-                    "text": sentence["text"]
+                    "text": sentence["text"],
+                    "weight": 1
                 },
+                {
+                    "text": "blurry, bad, text, horror, disgusting, NSFW, disfigured, nude",
+                    "weight": -1
+                }
             ],
         }
         requests.append(grequests.post(
