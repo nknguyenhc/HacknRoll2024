@@ -80,7 +80,7 @@ async def video(url: str):
 # A GET endpoint which returns the content of the video
 @app.get("/content/{vid}")
 async def video_content(vid: str, request: Request):
-    video_path = f"videos/{vid}.mp4"
+    video_path = os.path.join(os.path.dirname(__file__), f"videos/{vid}.mp4")
     if not os.path.exists(video_path):
         raise HTTPException(status_code=400, detail="Video does not exist")
 
