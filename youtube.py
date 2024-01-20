@@ -62,20 +62,54 @@ def get_caption(yt_link, vid_id):
     xml = list(yt.captions)[0].xml_captions
     tree = ET.ElementTree(ET.fromstring(xml))
     body = tree.getroot()[1]
-    captions = list(map(
-        lambda line: {
-            "start": float(line.attrib['t']) / 1000,
-            "duration": float(line.attrib['d']) / 1000,
-            "text": line.text,
-        },
-        body
-    ))
+    captions = preprocess_lines(body)
+    lyrics = ""
+    for line in captions:
+        lyrics = lyrics + line["text"] + "\n"
+    print(lyrics)
 
     return yt.title, captions
 
 
+# TODO: avoid wordy comics
+def preprocess_lines(body):
+    '''
+    Combine lines shorter than 5 seconds / 3 words.
+    If it's last line, combine with previous line.
+    '''
+    lines = []
+    line_template = {
+        "start": 0,
+        "duration": 0,
+        "text": ""
+    }
+    shortest_duration_threshold = 3 # 3 seconds
+    shortest_text_length_threshold = 2
+    curr_line = line_template.copy()
+    for line_dict in body:
+        if curr_line["duration"] == 0:
+            curr_line["start"] = float(line_dict.attrib['t']) / 1000
+        curr_line["duration"] += float(line_dict.attrib['d']) / 1000
+
+        text = line_dict.text.replace('♪', '').replace('\n', ' ').replace('  ', ' ').strip()
+        if curr_line["text"] != "":
+            curr_line["text"] += " " + text
+        else:
+            curr_line["text"] = text
+        
+        if curr_line["duration"] < shortest_duration_threshold or len(curr_line["text"].split(" ")) < shortest_text_length_threshold:
+            continue
+        else:
+            lines.append(curr_line)
+            curr_line = line_template.copy() 
+    if curr_line["duration"] != 0:
+        lines[-1]["duration"] += curr_line["duration"]
+        lines[-1]["text"] += " " + curr_line["text"]
+    return lines
+
+
 def test():
-    print(get_caption('https://www.youtube.com/watch?v=uelHwf8o7_U', 'sample'))
+    print(get_caption('https://www.youtube.com/watch?v=3Uo0JAUWijM', 'sample'))
 
 
 if __name__ == '__main__':
