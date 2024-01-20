@@ -8,11 +8,16 @@ import Container from "@mui/material/Container";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import InputAdornment from "@mui/material/InputAdornment";
 import api from "../api";
+import { useState } from "react";
+import { useSnackbar } from 'notistack';
 
 export default function Album() {
-  const [url, setUrl] = React.useState("");
-  const [title, setTitle] = React.useState("");
-  const [isUrlSubmitted, setIsUrlSubmitted] = React.useState(false);
+  const [url, setUrl] = useState("");
+  const [title, setTitle] = useState("");
+  const [isUrlSubmitted, setIsUrlSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [generatedUrl, setGeneratedUrl] = useState('');
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleUrlChange = (e) => {
     setUrl(e.target.value);
@@ -20,12 +25,16 @@ export default function Album() {
   const handleFindVideo = () => {
     api.get("/title", { params: { url: url } }).then((res) => {
       console.log(res.data);
+      setTitle(res.data.title);
+      setIsUrlSubmitted(true);
+    }).catch((err) => {
+      console.log(err);
+      enqueueSnackbar('Video not found', { variant: 'error' });
     });
   };
   const handleGenerateVideo = () => {
-    api.get("/generate", { params: { url: url } }).then((res) => {
-      console.log(res.data);
-    });
+    setLoading(true);
+    setLoading(false);
   };
 
   return (
@@ -54,7 +63,7 @@ export default function Album() {
           <Typography
             variant="h6"
             align="center"
-            color="text.secondary"
+            color="secondary"
             paragraph
           >
             Parodies is an AI-Powered platform that generates a music video for
@@ -80,21 +89,29 @@ export default function Album() {
                 ),
                 sx: {
                   borderRadius: "10px",
+                  // backgroundColor: "white",
+                  // color: "black",
+                  // "& input": {
+                  //   textAlign: "center",
+                  // },
                 },
               }}
             />
             {isUrlSubmitted && (
-              <TextField
-                variant="outlined"
-                fullWidth
-                value={title}
-                disabled
-                InputProps={{
-                  sx: {
-                    borderRadius: "10px",
-                  },
+              <Typography
+                variant="body1"
+                align="center"
+                color="primary"
+                sx={{
+                  borderRadius: "10px",
+                  backgroundColor: "white",
+                  textAlign: "center",
+                  padding: "10px",
+                  fontWeight: "800",
                 }}
-              />
+              >
+                Video Title: {title}
+              </Typography>
             )}
             {isUrlSubmitted ? (
               <Button variant="contained" onClick={handleGenerateVideo}>

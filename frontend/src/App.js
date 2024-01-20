@@ -1,6 +1,7 @@
 import "./App.css";
 import Main from "./components/Main";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { SnackbarProvider } from 'notistack';
 
 const theme = createTheme({
   palette: {
@@ -35,7 +36,9 @@ function App() {
   // );
   return (
     <ThemeProvider theme={theme}>
-      <Main />
+      <SnackbarProvider maxSnack={3}>
+        <Main />
+      </SnackbarProvider>
     </ThemeProvider>
   );
 }
