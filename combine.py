@@ -9,6 +9,7 @@ SNOWMAN_URL = 'https://www.youtube.com/watch?v=gset79KMmt0'
 COUNTING_STARS_URL = 'https://www.youtube.com/watch?v=hT_nvWreIhg'
 ANIMALS_URL = 'https://www.youtube.com/watch?v=qpgTC9MDx1o'
 PERFECT_URL = 'https://www.youtube.com/watch?v=2Vv-BfVoq4g'
+SEE_YOU_AGAIN_URL = 'https://www.youtube.com/watch?v=RgKAFK5djSk'
 
 def from_yt(yt_link, vid_id):
     """Generate a parody video based on the Youtube video and the video ID.
@@ -24,7 +25,7 @@ def from_yt(yt_link, vid_id):
 
 
 def test():
-    from_yt(SNOWMAN_URL, 'sample9')
+    from_yt(PERFECT_URL, 'sample10')
 
 
 if __name__ == '__main__':
