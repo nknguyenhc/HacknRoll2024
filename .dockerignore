@@ -1,0 +1,9 @@
+.git*
+**/*.pyc
+.venv/
+frontend/node_modules
+frontend/public
+frontend/src
+frontend/.gitignore
+frontend/package-lock.json
+frontend/package.json
