@@ -35,7 +35,8 @@ function App() {
   // );
   return (
     <ThemeProvider theme={theme}>
-      <Main />
+      {/* <Main /> */}
+      <video src="/content/sample" controls></video>
     </ThemeProvider>
   );
 }
