@@ -10,7 +10,7 @@ def from_yt(yt_link, vid_id):
     """
 
     title, lyrics = get_caption(yt_link, vid_id)
-    # generate_images(lyrics, vid_id)
+    generate_images(lyrics, vid_id)
     print("generate_video")
     generate_video(lyrics, vid_id)
 
