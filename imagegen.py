@@ -45,7 +45,7 @@ def generate_images(lyrics, vid_id):
         "Content-Type": "application/json",
         "Authorization": f"Bearer {os.environ.get('STABLE_DIFFUSION_KEY')}",
     }
-    os.makedirs(f"images/{vid_id}")
+    os.makedirs(os.path.join(os.path.dirname(__file__), f"images/{vid_id}"))
 
     # custom weights to important words
     #t0 = time.time()
@@ -73,6 +73,10 @@ def generate_images(lyrics, vid_id):
     # t1 = time.time()
     # print("{} seconds used to generate images".format(t1 - t0))
     for i, response in enumerate(responses):
+        if response is None:
+            print("None response")
+            copy_placeholder(vid_id, i)
+            continue
         if response.status_code != 200:
             print(response.json())
             copy_placeholder(vid_id, i)
@@ -80,13 +84,16 @@ def generate_images(lyrics, vid_id):
         
         data = response.json()
         image = data["artifacts"][0]
-        with open(f'images/{vid_id}/{i}.png', "wb") as f:
+        with open(os.path.join(os.path.dirname(__file__), f'images/{vid_id}/{i}.png'), "wb") as f:
             f.write(base64.b64decode(image["base64"]))
     print("images ready")
 
 
 def copy_placeholder(vid_id, index):
-    shutil.copy('placeholder/placeholder.png', f'images/{vid_id}/{index}.png')
+    shutil.copy(
+        os.path.join(os.path.dirname(__file__), 'placeholder/placeholder.png'), 
+        os.path.join(os.path.dirname(__file__), f'images/{vid_id}/{index}.png'),
+    )
 
 
 def test():

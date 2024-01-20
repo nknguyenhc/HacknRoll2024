@@ -1,10 +1,14 @@
 from fastapi import FastAPI, Request
-from fastapi.responses import Response
+from fastapi.responses import Response, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from fastapi import HTTPException
 from dotenv import load_dotenv
 from uuid import uuid4
 import os
+import sys
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from imagegen import generate_images
 from videogen import generate_video
@@ -29,9 +33,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.mount("/static", StaticFiles(directory=os.path.join(os.path.dirname(__file__), "frontend/build/static")), name="static")
+
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return FileResponse(os.path.join(os.path.dirname(__file__), "frontend/build/index.html"))
+
+@app.get("/favicon.ico")
+async def favicon():
+    return FileResponse(os.path.join(os.path.dirname(__file__), "frontend/build/favicon.ico"))
 
 # A GET endpoint which receives the url to a youtube video and return the title of the video
 @app.get("/title")
