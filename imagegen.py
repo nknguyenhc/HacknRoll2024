@@ -1,7 +1,8 @@
 import base64
-import requests
+import grequests
 import os
 import shutil
+#import time
 
 def generate_images(lyrics, vid_id):
     """Generate images based on given lyrics.
@@ -46,15 +47,16 @@ def generate_images(lyrics, vid_id):
     }
     os.makedirs(f"images/{vid_id}")
 
-    # make asynchronous requests?
+    # custom weights to important words
+    #t0 = time.time()
+    requests = []
     for i, sentence in enumerate(lyrics):
-        print(i)
         body = {
             "steps": 40,
             "width": 1216,
             "height": 832,
             "seed": 0,
-            "cfg_scale": 5,
+            "cfg_scale": 10,
             "samples": 1,
             "text_prompts": [
                 {
@@ -62,12 +64,17 @@ def generate_images(lyrics, vid_id):
                 },
             ],
         }
-        response = requests.post(
+        requests.append(grequests.post(
             url,
             headers=headers,
-            json=body,
-        )
+            json=body
+        ))
+    responses = grequests.map(requests)
+    # t1 = time.time()
+    # print("{} seconds used to generate images".format(t1 - t0))
+    for i, response in enumerate(responses):
         if response.status_code != 200:
+            print(response.json())
             copy_placeholder(vid_id, i)
             continue
         
@@ -75,6 +82,7 @@ def generate_images(lyrics, vid_id):
         image = data["artifacts"][0]
         with open(f'images/{vid_id}/{i}.png', "wb") as f:
             f.write(base64.b64decode(image["base64"]))
+    print("images ready")
 
 
 def copy_placeholder(vid_id, index):

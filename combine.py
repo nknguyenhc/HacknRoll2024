@@ -16,7 +16,7 @@ def from_yt(yt_link, vid_id):
 
 
 def test():
-    from_yt('https://www.youtube.com/watch?v=aJOTlE1K90k', 'sample')
+    from_yt('https://www.youtube.com/watch?v=uelHwf8o7_U', 'sample')
 
 
 if __name__ == '__main__':
