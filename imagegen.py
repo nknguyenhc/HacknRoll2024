@@ -7,7 +7,7 @@ from PIL import Image, ImageDraw, ImageFont
 IMAGE_WIDTH = 1024
 IMAGE_HEIGHT = 576
 SUBTITLE_HEIGHT = 500
-SUBS_FONT_FILENAME = "./subs_font.ttf"
+SUBS_FONT_FILENAME = os.path.join(os.path.dirname(__file__), "subs_font.ttf")
 SUBS_FONT_SIZE = 24
 SUBS_BORDER_COLOR = "blue"
 
@@ -103,7 +103,8 @@ def generate_images(lyrics, vid_id):
 
 def add_subtitle(filename, text):
     font = ImageFont.truetype(SUBS_FONT_FILENAME, SUBS_FONT_SIZE)
-    output = Image.open(filename)
+    filepath = os.path.join(os.path.dirname(__file__), filename)
+    output = Image.open(filepath)
     image = ImageDraw.Draw(output)
     _, _, w, h = image.textbbox((0, 0), text, font)
     w_start = (IMAGE_WIDTH - w) / 2
@@ -112,7 +113,7 @@ def add_subtitle(filename, text):
     image.text((w_start-1, SUBTITLE_HEIGHT+1), text, font=font, fill=SUBS_BORDER_COLOR)
     image.text((w_start+1, SUBTITLE_HEIGHT+1), text, font=font, fill=SUBS_BORDER_COLOR)
     image.text((w_start, SUBTITLE_HEIGHT), text, fill=None, font=font)
-    output.save(filename)
+    output.save(filepath)
 
 
 def copy_placeholder(vid_id, index):
