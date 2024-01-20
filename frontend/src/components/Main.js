@@ -37,7 +37,7 @@ export default function Main() {
       })
       .catch((err) => {
         console.log(err);
-        enqueueSnackbar("Video not found", { variant: "error" });
+        enqueueSnackbar(err.response.data.detail, { variant: "error" });
       });
   };
   const handleGenerateVideo = () => {
@@ -58,8 +58,7 @@ export default function Main() {
         localStorage.setItem("pastVideos", JSON.stringify(pastVideos));
       })
       .catch((err) => {
-        console.log(err);
-        enqueueSnackbar("Video generation failed", { variant: "error" });
+        enqueueSnackbar(err.response.data.detail, { variant: "error" });
       })
       .finally(() => {
         setLoading(false);
