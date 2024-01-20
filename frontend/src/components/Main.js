@@ -5,36 +5,60 @@ import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
+import Dialog from "@mui/material/Dialog";
+import DialogContent from "@mui/material/DialogContent";
+import LinearProgress from "@mui/material/LinearProgress";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import InputAdornment from "@mui/material/InputAdornment";
 import api from "../api";
 import { useState } from "react";
-import { useSnackbar } from 'notistack';
+import ReactPlayer from "react-player";
+import { useSnackbar } from "notistack";
 
 export default function Album() {
   const [url, setUrl] = useState("");
   const [title, setTitle] = useState("");
   const [isUrlSubmitted, setIsUrlSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [generatedUrl, setGeneratedUrl] = useState('');
+  const [open, setOpen] = React.useState(false);
   const { enqueueSnackbar } = useSnackbar();
+  const [vid_id, setVidId] = useState("");
 
+  const handleClose = () => {
+    setOpen(false);
+  };
   const handleUrlChange = (e) => {
     setUrl(e.target.value);
   };
   const handleFindVideo = () => {
-    api.get("/title", { params: { url: url } }).then((res) => {
-      console.log(res.data);
-      setTitle(res.data.title);
-      setIsUrlSubmitted(true);
-    }).catch((err) => {
-      console.log(err);
-      enqueueSnackbar('Video not found', { variant: 'error' });
-    });
+    api
+      .get("/title", { params: { url: url } })
+      .then((res) => {
+        setTitle(res.data.title);
+        setIsUrlSubmitted(true);
+      })
+      .catch((err) => {
+        console.log(err);
+        enqueueSnackbar("Video not found", { variant: "error" });
+      });
   };
   const handleGenerateVideo = () => {
     setLoading(true);
-    setLoading(false);
+    api
+      .get("/video", { params: { url: url } })
+      .then((res) => {
+        setVidId(res.data.vid_id);
+        enqueueSnackbar("Video generated successfully", { variant: "success" });
+        setOpen(true);
+        setLoading(true);
+      })
+      .catch((err) => {
+        console.log(err);
+        enqueueSnackbar("Video generation failed", { variant: "error" });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   return (
@@ -60,12 +84,7 @@ export default function Album() {
           >
             Generate Your Own Music Video
           </Typography>
-          <Typography
-            variant="h6"
-            align="center"
-            color="secondary"
-            paragraph
-          >
+          <Typography variant="h6" align="center" color="secondary" paragraph>
             Parodies is an AI-Powered platform that generates a music video for
             any youtube video of your choice, at your command.
           </Typography>
@@ -123,8 +142,20 @@ export default function Album() {
               </Button>
             )}
           </Stack>
+          {/* Add Linear Progress Bar here */}
+          {loading && <LinearProgress color="secondary" />}
         </Container>
       </Box>
+
+      <Dialog open={open} onClose={handleClose}>
+        <DialogContent>
+          <ReactPlayer
+            url={`http://localhost:8000/content/${vid_id}`}
+            controls={true}
+            playing={true}
+          />
+        </DialogContent>
+      </Dialog>
     </main>
   );
 }
