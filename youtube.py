@@ -1,5 +1,6 @@
 from pytube import YouTube
 import xml.etree.ElementTree as ET
+from audioToText import generateNoCaption
 import os
 
 def get_title(yt_link):
@@ -55,20 +56,22 @@ def get_caption(yt_link, vid_id):
     audio_streams = yt.streams.filter(only_audio=True, subtype="mp4")
     if len(audio_streams) == 0:
         raise ValueError("Video does not have any MP4 stream.")
-    if len(yt.captions) == 0:
-        raise ValueError("Video does not have any caption")
     
     # download video
     filename = f"{vid_id}.mp4"
     audio_streams[0].download(output_path=os.path.join(os.path.dirname(__file__), "audio"), filename=filename)
 
-    # extract caption
-    xml = list(yt.captions)[0].xml_captions
-    tree = ET.ElementTree(ET.fromstring(xml))
-    body = tree.getroot()[1]
-    captions = preprocess_lines(body)
-    
-    return yt.title, captions
+    #extract no caption
+    if len(yt.captions) == 0:
+        captions = generateNoCaption(filename=filename)
+        return yt.title, captions
+    else:
+        # extract caption
+        xml = list(yt.captions)[0].xml_captions
+        tree = ET.ElementTree(ET.fromstring(xml))
+        body = tree.getroot()[1]
+        captions = preprocess_lines(body)
+        return yt.title, captions
 
 
 # TODO: avoid wordy comics
