@@ -1,5 +1,6 @@
 from moviepy.editor import AudioFileClip, ImageClip, CompositeVideoClip
 from cv2 import imread
+import os
 
 # TODO: add subtitles
 def generate_video(lyrics, vid_id):
@@ -33,24 +34,24 @@ def generate_video(lyrics, vid_id):
         For example, image corresponding to frame 9 is named `9.png`.
     * Name the generated video. The video should be put in `video` folder and named `f"{vid_id}.mp4"`.
     """
-    audio = AudioFileClip(f"audio/{vid_id}.mp4")
+    audio = AudioFileClip(os.path.join(os.path.dirname(__file__), f"audio/{vid_id}.mp4"))
     fps = 5
 
     # create individual clips from images
     curr_point = lyrics[0]["duration"] + lyrics[0]["start"]
-    clips = [ImageClip(imread(f"images/{vid_id}/0.png")).set_duration(curr_point).set_fps(fps)]
+    clips = [ImageClip(imread(os.path.join(os.path.dirname(__file__), f"images/{vid_id}/0.png"))).set_duration(curr_point).set_fps(fps)]
     for i, sentence in enumerate(lyrics):
         if i == 0 or i == len(lyrics) - 1:
             continue
         next_point = sentence["duration"] + sentence["start"]
         print(i, next_point, curr_point)
-        clips.append(ImageClip(imread(f"images/{vid_id}/{i}.png")).set_start(curr_point).set_duration(next_point - curr_point).set_fps(fps))
+        clips.append(ImageClip(imread(os.path.join(os.path.dirname(__file__), f"images/{vid_id}/{i}.png"))).set_start(curr_point).set_duration(next_point - curr_point).set_fps(fps))
         curr_point = next_point
-    clips.append(ImageClip(imread(f"images/{vid_id}/{len(lyrics) - 1}.png")).set_start(curr_point).set_duration(audio.duration - curr_point).set_fps(fps))
+    clips.append(ImageClip(imread(os.path.join(os.path.dirname(__file__), f"images/{vid_id}/{len(lyrics) - 1}.png"))).set_start(curr_point).set_duration(audio.duration - curr_point).set_fps(fps))
     
     # combine clips and add audio
     video_clip = CompositeVideoClip(clips).set_audio(audio)
-    video_clip.write_videofile(f"videos/{vid_id}.mp4")
+    video_clip.write_videofile(os.path.join(os.path.dirname(__file__), f"videos/{vid_id}.mp4"))
     return video_clip
 
 
