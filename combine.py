@@ -5,6 +5,8 @@ from videogen import generate_video
 LOVE_THE_WAY_YOU_LIE_URL = 'https://www.youtube.com/watch?v=uelHwf8o7_U'
 HAPPY_NEW_YEAR_URL = 'https://www.youtube.com/watch?v=3Uo0JAUWijM'
 INTO_THE_UNKNOWN_URL = 'https://www.youtube.com/watch?v=gIOyB9ZXn8s'
+SNOWMAN_URL = 'https://www.youtube.com/watch?v=gset79KMmt0'
+COUNTING_STARS_URL = 'https://www.youtube.com/watch?v=hT_nvWreIhg'
 
 def from_yt(yt_link, vid_id):
     """Generate a parody video based on the Youtube video and the video ID.
@@ -20,7 +22,7 @@ def from_yt(yt_link, vid_id):
 
 
 def test():
-    from_yt(HAPPY_NEW_YEAR_URL, 'sample4_improved_line_break')
+    from_yt(COUNTING_STARS_URL, 'sample6')
 
 
 if __name__ == '__main__':

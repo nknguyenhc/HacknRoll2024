@@ -67,11 +67,7 @@ def get_caption(yt_link, vid_id):
     tree = ET.ElementTree(ET.fromstring(xml))
     body = tree.getroot()[1]
     captions = preprocess_lines(body)
-    lyrics = ""
-    for line in captions:
-        lyrics = lyrics + line["text"] + "\n"
-    print(lyrics)
-
+    
     return yt.title, captions
 
 

@@ -2,7 +2,14 @@ import base64
 import grequests
 import os
 import shutil
-#import time
+from PIL import Image, ImageDraw, ImageFont
+
+IMAGE_WIDTH = 1216
+IMAGE_HEIGHT = 832
+SUBTITLE_HEIGHT = 720
+SUBS_FONT_FILENAME = "./subs_font.ttf"
+SUBS_FONT_SIZE = 24
+SUBS_BORDER_COLOR = "blue"
 
 def generate_images(lyrics, vid_id):
     """Generate images based on given lyrics.
@@ -48,13 +55,12 @@ def generate_images(lyrics, vid_id):
     os.makedirs(os.path.join(os.path.dirname(__file__), f"images/{vid_id}"))
 
     # custom weights to important words
-    #t0 = time.time()
     requests = []
     for i, sentence in enumerate(lyrics):
         body = {
             "steps": 40,
-            "width": 1216,
-            "height": 832,
+            "width": IMAGE_WIDTH,
+            "height": IMAGE_HEIGHT,
             "seed": 0,
             "cfg_scale": 10,
             "samples": 1,
@@ -70,8 +76,6 @@ def generate_images(lyrics, vid_id):
             json=body
         ))
     responses = grequests.map(requests)
-    # t1 = time.time()
-    # print("{} seconds used to generate images".format(t1 - t0))
     for i, response in enumerate(responses):
         if response is None:
             print("None response")
@@ -84,9 +88,26 @@ def generate_images(lyrics, vid_id):
         
         data = response.json()
         image = data["artifacts"][0]
-        with open(os.path.join(os.path.dirname(__file__), f'images/{vid_id}/{i}.png'), "wb") as f:
+        filename = os.path.join(os.path.dirname(__file__), f'images/{vid_id}/{i}.png')
+        with open(filename, "wb") as f:
             f.write(base64.b64decode(image["base64"]))
+        add_subtitle(filename, lyrics[i]["text"])
+        
     print("images ready")
+
+
+def add_subtitle(filename, text):
+    font = ImageFont.truetype(SUBS_FONT_FILENAME, SUBS_FONT_SIZE)
+    output = Image.open(filename)
+    image = ImageDraw.Draw(output)
+    _, _, w, h = image.textbbox((0, 0), text, font)
+    w_start = (IMAGE_WIDTH - w) / 2
+    image.text((w_start-1, SUBTITLE_HEIGHT-1), text, font=font, fill=SUBS_BORDER_COLOR)
+    image.text((w_start+1, SUBTITLE_HEIGHT-1), text, font=font, fill=SUBS_BORDER_COLOR)
+    image.text((w_start-1, SUBTITLE_HEIGHT+1), text, font=font, fill=SUBS_BORDER_COLOR)
+    image.text((w_start+1, SUBTITLE_HEIGHT+1), text, font=font, fill=SUBS_BORDER_COLOR)
+    image.text((w_start, SUBTITLE_HEIGHT), text, fill=None, font=font)
+    output.save(filename)
 
 
 def copy_placeholder(vid_id, index):
@@ -101,14 +122,14 @@ def test():
         {
             "start": 1.395,
             "duration": 4.931,
-            "text": "\u266a Just gonna stand there\nand watch me burn \u266a"
+            "text": "Just gonna stand there and watch me burn"
         }, 
         {
             "start": 6.326,
             "duration": 5.000,
-            "text": "\u266a Well, that's alright, because\nI like the way it hurts \u266a"
+            "text": "Well, that's alright, because I like the way it hurts"
         },
-    ], 'sample')
+    ], 'samplee')
 
 
 if __name__ == '__main__':
