@@ -15,7 +15,7 @@ import { useState } from "react";
 import ReactPlayer from "react-player";
 import { useSnackbar } from "notistack";
 
-export default function Album() {
+export default function Main() {
   const [url, setUrl] = useState("");
   const [title, setTitle] = useState("");
   const [isUrlSubmitted, setIsUrlSubmitted] = useState(false);

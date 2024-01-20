@@ -1,43 +1,34 @@
 import "./App.css";
 import Main from "./components/Main";
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { SnackbarProvider } from 'notistack';
+import Library from "./components/Library";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import { SnackbarProvider } from "notistack";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Navbar from "./components/Navbar";
 
 const theme = createTheme({
   palette: {
-    mode: 'dark',
+    mode: "dark",
     primary: {
-      main: '#2272FF',
+      main: "#2272FF",
     },
     secondary: {
-      main: '#FFFFFF',
+      main: "#FFFFFF",
     },
   },
 });
 
 function App() {
-  // return (
-  //   <div className="App">
-  //     <header className="App-header">
-  //       <img src={logo} className="App-logo" alt="logo" />
-  //       <p>
-  //         Edit <code>src/App.js</code> and save to reload.
-  //       </p>
-  //       <a
-  //         className="App-link"
-  //         href="https://reactjs.org"
-  //         target="_blank"
-  //         rel="noopener noreferrer"
-  //       >
-  //         Learn React
-  //       </a>
-  //     </header>
-  //   </div>
-  // );
   return (
     <ThemeProvider theme={theme}>
       <SnackbarProvider maxSnack={3}>
-        <Main />
+        <Router>
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<Main />} />
+            <Route path="/library" element={<Library />} />
+          </Routes>
+        </Router>
       </SnackbarProvider>
     </ThemeProvider>
   );
