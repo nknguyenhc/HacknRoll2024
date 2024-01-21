@@ -51,7 +51,13 @@ export default function Main() {
           timestamp: new Date().toISOString(),
         };
         setVidId(videoData.id);
-        enqueueSnackbar("Video generated successfully", { variant: "success" });
+        enqueueSnackbar("Video started generating", { variant: "success" });
+        enqueueSnackbar("Wait or watch it later in the library", {
+          variant: "info",
+        });
+        enqueueSnackbar("If video fails to load after too long, try generating again", {
+          variant: "warning",
+        });
         setOpen(true);
         let pastVideos = JSON.parse(localStorage.getItem("pastVideos")) || [];
         pastVideos.push(videoData);
@@ -146,12 +152,16 @@ export default function Main() {
               </Button>
             )}
           </Stack>
-          {/* Add Linear Progress Bar here */}
           {loading && <LinearProgress color="secondary" />}
         </Container>
       </Box>
 
-      <VideoDialog open={open} handleClose={handleClose} title={title} vidId={vidId} />
+      <VideoDialog
+        open={open}
+        handleClose={handleClose}
+        title={title}
+        vidId={vidId}
+      />
     </main>
   );
 }

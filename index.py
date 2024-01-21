@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, BackgroundTasks
 from fastapi.responses import Response, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -18,6 +18,15 @@ from utils import range_requests_response
 load_dotenv()
 
 app = FastAPI()
+
+generating_videos = set() # A set of video ids that are currently being generated
+
+async def generate_content(lyrics, vid_id):
+    try:
+        generate_images(lyrics, vid_id)
+        generate_video(lyrics, vid_id)
+    finally:
+        generating_videos.remove(vid_id)
 
 # Set up CORS
 origins = [
@@ -59,12 +68,12 @@ async def title(url: str):
 
 # A GET endpoint which receives the url to a youtube video and return the generated video for streaming
 @app.get("/video")
-async def video(url: str):
+async def video(url: str, background_tasks: BackgroundTasks):
     vid_id = str(uuid4())
     try:
         title, lyrics = get_caption(url, vid_id)
-        generate_images(lyrics, vid_id)
-        video = generate_video(lyrics, vid_id)
+        generating_videos.add(vid_id)
+        background_tasks.add_task(generate_content, lyrics, vid_id)
         return {
             "id": vid_id,
             "title": title,
@@ -80,6 +89,8 @@ async def video(url: str):
 # A GET endpoint which returns the content of the video
 @app.get("/content/{vid}")
 async def video_content(vid: str, request: Request):
+    if vid in generating_videos:
+        raise HTTPException(status_code=400, detail="Video is still being generated")
     video_path = os.path.join(os.path.dirname(__file__), f"videos/{vid}.mp4")
     if not os.path.exists(video_path):
         raise HTTPException(status_code=400, detail="Video does not exist")
