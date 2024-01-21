@@ -5,6 +5,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { SnackbarProvider } from "notistack";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Navbar from "./components/Navbar";
+import { PageContextProvider } from "./context";
 
 const theme = createTheme({
   palette: {
@@ -23,11 +24,13 @@ function App() {
     <ThemeProvider theme={theme}>
       <SnackbarProvider maxSnack={3}>
         <Router>
-          <Navbar />
-          <Routes>
-            <Route path="/" element={<Main />} />
-            <Route path="/library" element={<Library />} />
-          </Routes>
+          <PageContextProvider>
+            <Navbar />
+            <Routes>
+              <Route path="/" element={<Main />} />
+              <Route path="/library" element={<Library />} />
+            </Routes>
+          </PageContextProvider>
         </Router>
       </SnackbarProvider>
     </ThemeProvider>
