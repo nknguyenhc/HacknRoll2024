@@ -79,7 +79,7 @@ async def video(url: str, background_tasks: BackgroundTasks):
             "title": title,
         }
     except ValueError:
-        raise HTTPException(status_code=400, detail="Invalid URL or video does not have caption")
+        raise HTTPException(status_code=400, detail="Invalid URL or video is longer than 10 minutes")
     except ConnectionError:
         raise HTTPException(status_code=500, detail="Failed to generate the video")
     except Exception as e:
