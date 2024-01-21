@@ -2,13 +2,15 @@ import base64
 import grequests
 import os
 import shutil
+import textwrap
 from PIL import Image, ImageDraw, ImageFont
 
 IMAGE_WIDTH = 1024
 IMAGE_HEIGHT = 576
-SUBTITLE_HEIGHT = 500
+SUBS_CENTER_HEIGHT = 510
 SUBS_FONT_FILENAME = os.path.join(os.path.dirname(__file__), "subs_font.ttf")
-SUBS_FONT_SIZE = 24
+SUBS_FONT_SIZE = 20
+SUBS_MAX_CHARS_PER_LINE = 70
 SUBS_BORDER_COLOR = "blue"
 
 def generate_images(lyrics, vid_id):
@@ -107,13 +109,20 @@ def add_subtitle(filename, text):
     filepath = os.path.join(os.path.dirname(__file__), filename)
     output = Image.open(filepath)
     image = ImageDraw.Draw(output)
-    _, _, w, h = image.textbbox((0, 0), text, font)
-    w_start = (IMAGE_WIDTH - w) / 2
-    image.text((w_start-1, SUBTITLE_HEIGHT-1), text, font=font, fill=SUBS_BORDER_COLOR)
-    image.text((w_start+1, SUBTITLE_HEIGHT-1), text, font=font, fill=SUBS_BORDER_COLOR)
-    image.text((w_start-1, SUBTITLE_HEIGHT+1), text, font=font, fill=SUBS_BORDER_COLOR)
-    image.text((w_start+1, SUBTITLE_HEIGHT+1), text, font=font, fill=SUBS_BORDER_COLOR)
-    image.text((w_start, SUBTITLE_HEIGHT), text, fill=None, font=font)
+    lines = textwrap.wrap(text, SUBS_MAX_CHARS_PER_LINE)
+    _, _, _, line_h = font.getbbox(lines[0])
+    total_h = line_h * len(lines)
+    start_h = SUBS_CENTER_HEIGHT - total_h / 2
+    curr_h = start_h
+    for line in lines:
+        _, _, w, _ = font.getbbox(line)
+        start_w = (IMAGE_WIDTH - w) / 2
+        image.text((start_w-1, curr_h-1), text=line, font=font, fill=SUBS_BORDER_COLOR)
+        image.text((start_w+1, curr_h-1), text=line, font=font, fill=SUBS_BORDER_COLOR)
+        image.text((start_w-1, curr_h+1), text=line, font=font, fill=SUBS_BORDER_COLOR)
+        image.text((start_w+1, curr_h+1), text=line, font=font, fill=SUBS_BORDER_COLOR)
+        image.text((start_w, curr_h), text=line, font=font, fill=None)
+        curr_h += line_h
     output.save(filepath)
 
 
