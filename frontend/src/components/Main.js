@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useState, useCallback } from "react";
 import VideoDialog from "./VideoDialog";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
@@ -10,7 +10,6 @@ import LinearProgress from "@mui/material/LinearProgress";
 import YouTubeIcon from "@mui/icons-material/YouTube";
 import InputAdornment from "@mui/material/InputAdornment";
 import api from "../api";
-import { useState } from "react";
 import { useSnackbar } from "notistack";
 
 export default function Main() {
@@ -18,7 +17,7 @@ export default function Main() {
   const [title, setTitle] = useState("");
   const [isUrlSubmitted, setIsUrlSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const [vidId, setVidId] = useState("");
 
@@ -40,7 +39,10 @@ export default function Main() {
         enqueueSnackbar(err.response.data.detail, { variant: "error" });
       });
   };
-  const handleGenerateVideo = () => {
+  const handleGenerateVideo = useCallback(() => {
+    if (loading) {
+      return;
+    }
     setLoading(true);
     api
       .get("/video", { params: { url: url } })
@@ -69,7 +71,7 @@ export default function Main() {
       .finally(() => {
         setLoading(false);
       });
-  };
+  }, [loading, enqueueSnackbar, url]);
 
   return (
     <main>

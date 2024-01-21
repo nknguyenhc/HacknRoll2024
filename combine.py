@@ -10,6 +10,8 @@ COUNTING_STARS_URL = 'https://www.youtube.com/watch?v=hT_nvWreIhg'
 ANIMALS_URL = 'https://www.youtube.com/watch?v=qpgTC9MDx1o'
 PERFECT_URL = 'https://www.youtube.com/watch?v=2Vv-BfVoq4g'
 SEE_YOU_AGAIN_URL = 'https://www.youtube.com/watch?v=RgKAFK5djSk'
+FLY_AWAY_URL = 'https://www.youtube.com/watch?v=cMg8KaMdDYo'
+CLOSE_TO_THE_SUN_URL = 'https://www.youtube.com/watch?v=oJuGlqO85YI'
 
 def from_yt(yt_link, vid_id):
     """Generate a parody video based on the Youtube video and the video ID.
@@ -25,7 +27,7 @@ def from_yt(yt_link, vid_id):
 
 
 def test():
-    from_yt(PERFECT_URL, 'sample10')
+    from_yt(CLOSE_TO_THE_SUN_URL, 'sample12')
 
 
 if __name__ == '__main__':
