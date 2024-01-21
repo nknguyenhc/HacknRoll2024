@@ -88,6 +88,7 @@ def generate_images(lyrics, vid_id):
             continue
         if response.status_code != 200:
             print(response.json())
+            print(f"For prompt: {lyrics[i]['text']}")
             copy_placeholder(vid_id, i)
             continue
         
