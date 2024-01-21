@@ -12,6 +12,9 @@ PERFECT_URL = 'https://www.youtube.com/watch?v=2Vv-BfVoq4g'
 SEE_YOU_AGAIN_URL = 'https://www.youtube.com/watch?v=RgKAFK5djSk'
 FLY_AWAY_URL = 'https://www.youtube.com/watch?v=cMg8KaMdDYo'
 CLOSE_TO_THE_SUN_URL = 'https://www.youtube.com/watch?v=oJuGlqO85YI'
+IMPOSTER_IMPERCEPTIBLE_URL = 'https://www.youtube.com/watch?v=KByREO4gB0M'
+LEGENDS_NEVER_DIE_URL = 'https://www.youtube.com/watch?v=r6zIGXun57U'
+THE_NIGHTS_URL = 'https://www.youtube.com/watch?v=UtF6Jej8yb4'
 
 def from_yt(yt_link, vid_id):
     """Generate a parody video based on the Youtube video and the video ID.
@@ -27,7 +30,7 @@ def from_yt(yt_link, vid_id):
 
 
 def test():
-    from_yt(CLOSE_TO_THE_SUN_URL, 'sample12')
+    from_yt(THE_NIGHTS_URL, 'sample15')
 
 
 if __name__ == '__main__':

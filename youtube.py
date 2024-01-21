@@ -81,7 +81,6 @@ def get_caption(yt_link, vid_id):
     return yt.title, captions
 
 
-# TODO: avoid wordy comics
 def preprocess_lines(body):
     '''
     Combine lines shorter than 5 seconds / 3 words.
