@@ -1,8 +1,7 @@
-from fastapi import FastAPI, Request, BackgroundTasks
-from fastapi.responses import Response, FileResponse
+from fastapi import FastAPI, Request, BackgroundTasks, HTTPException, status
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi import HTTPException
 from dotenv import load_dotenv
 from uuid import uuid4
 import os
@@ -58,11 +57,11 @@ async def title(url: str):
     try:
         title = get_title(url)
     except ValueError:
-        raise HTTPException(status_code=400, detail="Invalid URL")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid URL")
     except ConnectionError:
-        raise HTTPException(status_code=500, detail="Failed to find the video")
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Failed to find the video")
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"An unexpected error occurred: {str(e)}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"An unexpected error occurred: {str(e)}")
     return {"title": title}
 
 
@@ -79,21 +78,21 @@ async def video(url: str, background_tasks: BackgroundTasks):
             "title": title,
         }
     except ValueError:
-        raise HTTPException(status_code=400, detail="Invalid URL or video does not have caption")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid URL or video is longer than 10 minutes")
     except ConnectionError:
-        raise HTTPException(status_code=500, detail="Failed to generate the video")
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Failed to find the video")
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"An unexpected error occurred: {str(e)}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"An unexpected error occurred: {str(e)}")
 
 
 # A GET endpoint which returns the content of the video
 @app.get("/content/{vid}")
 async def video_content(vid: str, request: Request):
     if vid in generating_videos:
-        raise HTTPException(status_code=400, detail="Video is still being generated")
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Video is still being generated")
     video_path = os.path.join(os.path.dirname(__file__), f"videos/{vid}.mp4")
     if not os.path.exists(video_path):
-        raise HTTPException(status_code=400, detail="Video does not exist")
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Video not found")
     return range_requests_response(request, video_path, "video/mp4")
 
 

@@ -56,6 +56,8 @@ def get_caption(yt_link, vid_id):
     audio_streams = yt.streams.filter(only_audio=True, subtype="mp4")
     if len(audio_streams) == 0:
         raise ValueError("Video does not have any MP4 stream.")
+    if yt.length > 10 * 60:
+        raise ValueError("Video is longer than 10 mins.")
     
     # download video
     filename = f"{vid_id}.mp4"

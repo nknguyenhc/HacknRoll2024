@@ -1,5 +1,13 @@
 import VideoDialog from "./VideoDialog";
-import { Container, Grid, Card, CardContent, Typography, Box, IconButton } from "@mui/material";
+import {
+  Container,
+  Grid,
+  Card,
+  CardContent,
+  Typography,
+  Box,
+  IconButton,
+} from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useEffect, useState } from "react";
 
@@ -25,9 +33,11 @@ export default function Library() {
 
   const handleDeleteClick = (event, videoToDelete) => {
     event.stopPropagation();
-    const updatedVideos = pastVideos.filter(video => video.id !== videoToDelete.id);
+    const updatedVideos = pastVideos.filter(
+      (video) => video.id !== videoToDelete.id
+    );
     setPastVideos(updatedVideos);
-    localStorage.setItem('pastVideos', JSON.stringify(updatedVideos));
+    localStorage.setItem("pastVideos", JSON.stringify(updatedVideos));
   };
 
   return (
@@ -35,27 +45,43 @@ export default function Library() {
       sx={{
         bgcolor: "background.paper",
         width: "100vw",
-        height: "100%",
+        height: "100vh",
         display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
+        pt: "20px",
       }}
     >
       <Container maxWidth="md">
-        <Grid container spacing={4}>
+        <Grid container spacing={2}>
           {pastVideos.map((video) => (
-            <Grid item key={video.id} xs={12} sm={6} md={4}>
+            <Grid item key={video.id} xs={12}>
               <Card onClick={() => handleCardClick(video)}>
                 <CardContent>
-                  <Typography gutterBottom variant="h6" component="h2" color={"primary"} fontWeight="800">
-                    {video.title}
-                  </Typography>
-                  <Typography>
-                    Generated at: {new Date(video.timestamp).toLocaleString()}
-                  </Typography>
-                  <IconButton onClick={(event) => handleDeleteClick(event, video)}>
-                    <DeleteIcon />
-                  </IconButton>
+                  <Box
+                    display="flex"
+                    justifyContent="space-between"
+                    alignItems="center"
+                  >
+                    <Box>
+                      <Typography
+                        gutterBottom
+                        variant="h6"
+                        component="h2"
+                        color={"primary"}
+                        fontWeight="800"
+                      >
+                        {video.title}
+                      </Typography>
+                      <Typography>
+                        Generated at:{" "}
+                        {new Date(video.timestamp).toLocaleString()}
+                      </Typography>
+                    </Box>
+                    <IconButton
+                      onClick={(event) => handleDeleteClick(event, video)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Box>
                 </CardContent>
               </Card>
             </Grid>
