@@ -11,11 +11,11 @@ import YouTubeIcon from "@mui/icons-material/YouTube";
 import InputAdornment from "@mui/material/InputAdornment";
 import api from "../api";
 import { useSnackbar } from "notistack";
+import { usePageContext } from "../context";
 
 export default function Main() {
-  const [url, setUrl] = useState("");
+  const { url, setUrl, isUrlSubmitted, setIsUrlSubmitted } = usePageContext();
   const [title, setTitle] = useState("");
-  const [isUrlSubmitted, setIsUrlSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
