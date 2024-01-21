@@ -8,15 +8,17 @@ function VideoDialog({ open, handleClose, title, vidId }) {
   const [videoExists, setVideoExists] = useState(true);
 
   useEffect(() => {
-    const checkVideoExists = async () => {
-      try {
-        const response = await api.get(`content/${vidId}`);
-        if (response.status === 404) {
+    const checkVideoExists = () => {
+      api
+        .get(`content/${vidId}`)
+        .then((response) => {
+          if (response.status === 204) {
+            enqueueSnackbar("Video is still generating", { variant: "info" });
+          }
+        })
+        .catch((error) => {
           setVideoExists(false);
-        }
-      } catch (error) {
-        console.error(error);
-      }
+        });
     };
 
     if (vidId) {
