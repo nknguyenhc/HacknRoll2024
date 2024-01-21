@@ -1,7 +1,37 @@
+import api from "../api";
 import { Dialog, DialogContent, Typography } from "@mui/material";
 import ReactPlayer from "react-player";
+import { useState, useEffect } from "react";
+import { enqueueSnackbar } from "notistack";
 
 function VideoDialog({ open, handleClose, title, vidId }) {
+  const [videoExists, setVideoExists] = useState(true);
+
+  useEffect(() => {
+    const checkVideoExists = async () => {
+      try {
+        const response = await api.get(`content/${vidId}`);
+        if (response.status === 404) {
+          setVideoExists(false);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    if (vidId) {
+      checkVideoExists();
+      if (!videoExists) {
+        // Remove vidId from localStorage
+        let pastVideos = JSON.parse(localStorage.getItem("pastVideos")) || [];
+        pastVideos = pastVideos.filter((video) => video.id !== vidId);
+        localStorage.setItem("pastVideos", JSON.stringify(pastVideos));
+        // Add to snackbar
+        enqueueSnackbar("Video was failed to generate", { variant: "error" });
+      }
+    }
+  }, [vidId, videoExists]);
+
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
       <DialogContent
@@ -24,11 +54,13 @@ function VideoDialog({ open, handleClose, title, vidId }) {
         >
           Video Title: {title}
         </Typography>
-        <ReactPlayer
+        {videoExists && (
+          <ReactPlayer
             url={`content/${vidId}`}
             controls={true}
             playing={true}
           />
+        )}
       </DialogContent>
     </Dialog>
   );
