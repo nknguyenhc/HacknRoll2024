@@ -63,20 +63,24 @@ def get_caption(yt_link, vid_id):
     filename = f"{vid_id}.mp4"
     audio_streams[0].download(output_path=os.path.join(os.path.dirname(__file__), "audio"), filename=filename)
 
-    raw_caption = yt.captions.get("English")
-    if raw_caption is None:
-        raw_caption = yt.captions.get("en")
-    if raw_caption is None:
+    keys = yt.captions.keys()
+    captions = None
+    for caption in keys:
+        key = str(caption)
+        if "English" in key or key == "en" or "en-" in key or "en -" in key:
+            try:
+                xml = yt.captions.get(caption.code).xml_captions
+                tree = ET.ElementTree(ET.fromstring(xml))
+                captions = preprocess_lines(tree.getroot().find("body"))
+                print("Captions retrieved from YouTube")
+                break
+            except Exception as e:
+                print(e)
+                print(f"For key: {key}")
+
+    if captions is None:
+        print("Auto-generating captions")
         captions = generateNoCaption(filename=filename)    
-    else:
-        try:
-            xml = raw_caption.xml_captions
-            tree = ET.ElementTree(ET.fromstring(xml))
-            captions = preprocess_lines(tree.getroot().find("body"))
-        except Exception as e:
-            print(e)
-            print("Auto-generating captions")
-            captions = generateNoCaption(filename=filename)
 
     return yt.title, captions
 
@@ -118,7 +122,7 @@ def preprocess_lines(body):
 
 
 def test():
-    print(get_caption('https://www.youtube.com/watch?v=g-OF7KGyDis', 'sample'))
+    print(get_caption('https://www.youtube.com/watch?v=cMg8KaMdDYo', 'sample'))
 
 
 if __name__ == '__main__':
