@@ -89,10 +89,10 @@ async def video(url: str, background_tasks: BackgroundTasks):
 @app.get("/content/{vid}")
 async def video_content(vid: str, request: Request):
     if vid in generating_videos:
-        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="Video is still being generated")
+        raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail="Video is still being generated")
     video_path = os.path.join(os.path.dirname(__file__), f"videos/{vid}.mp4")
     if not os.path.exists(video_path):
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Video not found")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Video does not exist")
     return range_requests_response(request, video_path, "video/mp4")
 
 
