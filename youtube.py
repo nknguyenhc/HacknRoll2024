@@ -63,17 +63,22 @@ def get_caption(yt_link, vid_id):
     filename = f"{vid_id}.mp4"
     audio_streams[0].download(output_path=os.path.join(os.path.dirname(__file__), "audio"), filename=filename)
 
-    #extract no caption
-    if len(yt.captions) == 0:
-        captions = generateNoCaption(filename=filename)
-        return yt.title, captions
+    raw_caption = yt.captions.get("English")
+    if raw_caption is None:
+        raw_caption = yt.captions.get("en")
+    if raw_caption is None:
+        captions = generateNoCaption(filename=filename)    
     else:
-        # extract caption
-        xml = list(yt.captions)[0].xml_captions
-        tree = ET.ElementTree(ET.fromstring(xml))
-        body = tree.getroot()[1]
-        captions = preprocess_lines(body)
-        return yt.title, captions
+        try:
+            xml = raw_caption.xml_captions
+            tree = ET.ElementTree(ET.fromstring(xml))
+            captions = preprocess_lines(tree.getroot().find("body"))
+        except Exception as e:
+            print(e)
+            print("Auto-generating captions")
+            captions = generateNoCaption(filename=filename)
+
+    return yt.title, captions
 
 
 # TODO: avoid wordy comics
@@ -114,7 +119,7 @@ def preprocess_lines(body):
 
 
 def test():
-    print(get_caption('https://www.youtube.com/watch?v=3Uo0JAUWijM', 'sample'))
+    print(get_caption('https://www.youtube.com/watch?v=g-OF7KGyDis', 'sample'))
 
 
 if __name__ == '__main__':
